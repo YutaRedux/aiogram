@@ -44,6 +44,13 @@ class Bot(BaseBot, DataMixin, ContextInstanceMixin):
         if hasattr(self, '_me'):
             delattr(self, '_me')
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await (await self.get_session()).close()
+        return self
+            
     async def download_file_by_id(
             self,
             file_id: base.String,
